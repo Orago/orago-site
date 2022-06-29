@@ -33,10 +33,10 @@ return function (){
     }
   }
 
-  _M.data.background = "#E6C65C";
-  _M.data.foreground = "#BF9C2A";
+  _M.data.background = "#EEAB53";
+  _M.data.foreground = "#DA7C01";
 
-  window.nav.updateColors(_M.data.background, _M.data.foreground);
+    window.nav.updateColors(_M.data.foreground, _M.data.background);
 
   let styles = () => `
   <style>

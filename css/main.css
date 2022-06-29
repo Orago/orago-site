@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fredoka+One&family=Mochiy+Pop+P+One&display=swap');
+
 *,
 *:before,
 *:after {
@@ -15,4 +17,5 @@ body {
   background: gray;
   margin: 0;
   transition: opacity 1s;
+  font-family: 'Mochiy Pop P One', sans-serif;
 }

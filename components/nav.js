@@ -2,7 +2,7 @@ return function (){
   /* HTML */
 
 
-  let navStyles = (color = "white", background = "black") => `
+  let navStyles = (background = "black", foreground = "white") => `
     <style nav-styles>
       nav[main-nav] {
         background: ${background};
@@ -14,10 +14,10 @@ return function (){
 
       .main-nav a[nav-button] {
         flex: 1 1;
-        color: ${color};
+        color: ${foreground};
         padding: 10px;
         margin: 5px;
-        border: 1px solid ${color};
+        border: 1px solid ${foreground};
         border-radius: 5px;
         text-align: center;
         text-decoration: none;
@@ -42,18 +42,14 @@ return function (){
         "main-nav": ""
       },
       nodeAnd: function (that){
-        that.updateColors = function (color, background){
-          if (color)      this.data.color = color;
-          if (background) this.data.background = background;
+        that.updateColors = function (){
 
           let navStylesObj = document.head.querySelector("[nav-styles]");
 
-          if (!navStylesObj){
-            document.head.innerHTML += navStyles(this.data.color, this.data.background);
-          }
-          else {
-            navStylesObj.outerHTML = navStyles(this.data.color, this.data.background);
-          }
+          if (!navStylesObj) document.head.innerHTML += navStyles(_M.data.foreground, _M.data.background);
+          else navStylesObj.outerHTML = navStyles(_M.data.foreground, _M.data.background);
+          
+          console.log(navStyles(_M.data.foreground, _M.data.background))
         };
 
         _M.node(null, {
@@ -61,9 +57,7 @@ return function (){
           style: {
             background: _M.data.background
           }
-        })
-
-        that.updateColors();
+        });
       }
     });
 
@@ -96,6 +90,7 @@ return function (){
     _M.node("a", {
       setText: "About Me",
       attr: { "nav-button": "" },
+      listen: ["click",  () => transitionComponent("aboutme")],
       appendTo: nav
     });
   
