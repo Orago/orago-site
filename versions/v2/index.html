@@ -1,0 +1,35 @@
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Orago</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <div meown-component="css" meown-locked></div>
+  </head>
+  <body>
+    <nav meown-component="nav" ></nav>
+
+    <div current-components>
+      <div meown-component="palette"></div>
+    </div>
+    
+    <script src="./mittz/v13.js"></script>
+    <script src="./js/componentLoader.js"></script>
+
+    <div meown-component="https"></div>
+
+    <script>
+      let componentManager = new componentLoader();
+      _M.data = {
+        components: {
+
+        }
+      };
+      componentManager.update();
+    </script>
+  </body>
+</html>
+
+<!-- https://coolors.co/577590-f3ca40-f2a541-f08a4b-d78a76 -->
