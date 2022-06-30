@@ -21,33 +21,37 @@ return {
     `
     <h1 cover-main>I'm Orago</h1>
     <h2 class="color-foreground">We do stuff here</h2>
-    <img cover-image src="${gonCatImg}">
-    <h3>Here are some of my favorite things to do!</h3>
-    <div class="flex justify-center">
-      <ul>
-        <li>Drawing</li>
-        <li>Programming</li>
-        <li>Photography</li>
-        <li>Drawing</li>
-      </ul>
-    </div>
-    <br>
-    <h2>Some of My Favorite Games</h2>
-    <div class="flex justify-center">
-      <ul>
-        <li>
-          <a href="https://www.minecraft.net/en-us">Minecraft</a>
-        </li>
-        <li>
-          <a href="https://recroom.com/">Rec Room</a>
-        </li>
-        <li>
-          <a href="https://hopfrogsa.net/">Forager</a>
-        </li>
-      </ul>
-    </div>
+    <span class="aaaa">
+      <img cover-image id="goncat" src="${gonCatImg}">
+    </span>
+    <span class="color-foreground">
+      <h3>Here are some of my favorite things to do!</h3>
+      <div class="flex justify-center">
+        <ul>
+          <li>Drawing</li>
+          <li>Programming</li>
+          <li>Photography</li>
+          <li>Drawing</li>
+        </ul>
+      </div>
+      <br>
+      <h2>Some of My Favorite Games</h2>
+      <div class="flex justify-center">
+        <ul>
+          <li>
+            <a href="https://www.minecraft.net/en-us">Minecraft</a>
+          </li>
+          <li>
+            <a href="https://recroom.com/">Rec Room</a>
+          </li>
+          <li>
+            <a href="https://hopfrogsa.net/">Forager</a>
+          </li>
+        </ul>
+      </div>
+    </span>
     ${this.styles()}
-    `
+    `;
   },
   styles: function (){
     let { cssTag } = this;
@@ -60,13 +64,6 @@ return {
         height: 100%;
         text-align: center;
       }
-
-      .background-background { background: ${background} }
-      .background-foreground { background: ${foreground} }
-      .color-background { color: ${background} }
-      .color-foreground { color: ${foreground} }
-
-
   
       ${cssTag} h1[cover-main] {
         color: ${foreground};

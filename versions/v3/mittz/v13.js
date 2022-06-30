@@ -270,6 +270,175 @@ class _M_Cookie {
   }
 }
 
+class _M_Repeater {
+  constructor (){
+    this.endFrame = 0;
+    this.paused   = false; //* [ paused ] part of the 'togglePause' state function\
+    this.frame    = {
+      filterStrength: 20,
+      interval: 16,
+      count:    0,
+      frameTime: 1,
+      lastLoop: new Date,
+      start: performance.now()
+    };
+    
+    this.queue = [];
+
+    let f = this.frame;
+  }
+
+  togglePause () {
+    this.paused = (this.paused == true ? false : true);
+    if (this.paused == false) this.run(this.update);
+  }
+
+  pause () {
+    this.paused = true;
+  }
+
+  unpause () {
+    if (this.paused == false) return;
+    this.paused == false;
+    this.run(this.update);
+  }
+
+  run (v) {
+    let { frame: f, endFrame: ef } = this;
+    let { update } = v;
+
+    if (this.queue.length > 0){
+      this.queue[0]();
+      this.queue.shift();
+      return requestAnimationFrame(this.run.bind(this, v));
+    }
+
+    f.thisFrameTime = (f.thisLoop = new Date) - f.lastLoop;
+    f.frameTime += (f.thisFrameTime - f.frameTime) / f.filterStrength;
+    f.lastLoop = f.thisLoop;
+    f.fps = Math.floor(1000 / f.frameTime);
+
+    f.delta = performance.now() - f.start;
+
+    if (f.delta >= f.interval) {
+      update(this);
+
+      f.start = null;
+      f.count++;
+    };
+
+
+    if (this.paused == true || (ef && ef < f.count && ef > 0)) return false;
+
+    requestAnimationFrame(this.run.bind(this, v));
+  };
+
+  update = () => {};
+
+  start = (e) => {
+    this.run(e);
+  }
+}
+
+class _M_Image {
+  constructor (_M){
+    if (!_M.cache.images) _M.cache.images = {};
+    this.cache = _M.cache.images;
+  }
+
+  get = (key) => this.cache[key];
+
+  load = async (key, url) => {
+    this.cache[key] = new Image();
+    await new Promise(r => this.cache[key].onload = r, this.cache[key].src = url);
+    return true;
+  }
+
+  loadMultiple = async (values) => {
+    let vals = Object.keys(values);
+
+    await new Promise(r => {
+      vals.forEach(async (name, index) => {
+        await this.load(name, values[name]);
+        if (index == vals.length-1) r(true);
+      });
+    });
+
+    return true;
+  }
+}
+
+class _M_Cursor {
+  constructor (object = document.body){
+    this.pos = {
+      x: 0, y: 0, clicking: false
+    };
+
+    this.click = {};
+    this.release = {};
+    this.start = {
+      x: 0, y: 0
+    };
+    this.end = {
+      x: 0, y:0
+    }
+    this.button = -1;
+
+
+    object.addEventListener("mousemove", (e) => {
+      this.pos.x = e.clientX
+      this.pos.y = e.clientY
+    });
+
+    object.addEventListener("mousedown", (e) => {
+      ((m) => Object.keys(m).forEach(f => m[f](this)) )(this.click);
+
+      this.button = e.button;
+      this.start = { x: this.pos.x, y: this.pos.y };
+
+      this.clicking = true;
+    });
+
+    object.addEventListener("mouseup",   (e) => {
+      ((m) => Object.keys(m).forEach(f => m[f](this)) )(this.release);
+      
+      this.button = e.button;
+      this.end = { x: this.pos.x, y: this.pos.y };
+
+      this.clicking = false;
+    });
+  }
+}
+
+class _M_Keyboard {
+  constructor(object = window) {
+    this.keysPressed = {};
+    this.onkey = function () {};
+
+    object.onkeyup = (e) => delete this.keysPressed[String.fromCharCode(e.keyCode)];
+
+    object.onkeydown = (e) => {
+      let kc = String.fromCharCode(e.keyCode);
+      if (this.isPressed(kc) == false) this.onkey(kc);
+      this.keysPressed[kc] = true;
+    }
+  }
+
+  anyPressed = function () {
+    let args = Object.keys(arguments);
+
+    for (var i = 0; i < args.length; i++)
+      if (this.keysPressed[arguments[args[i]]] == true){
+        return true;
+      }
+
+    return false;
+  }
+
+  isPressed = (e) => this.keysPressed[e] == true;
+}
+  
+
 var _M = {
   about: {
     name: "Mittz.JS"
@@ -302,7 +471,7 @@ var _M = {
     await this.get({ format: "html", url }).then((content) => object.innerHTML = content); 
     return true; 
   },
-  qs: obj => document.querySelector(obj),
+  qs: (obj, parent = document) => parent.querySelector(obj),
   qsAll: value                 => document.querySelectorAll(value),
   random         : ( min = 0, max = 50 ) => Math.floor( Math.random() * ( max - min ) + min ),
   max            : ( input,   max = 10 ) => ( input < max ) ? input : max,
@@ -368,19 +537,16 @@ var _M = {
 }
   
   _M.parseUrl = window["orago's tool kit"].parseUrl;
-  _M.node = function (){
-    return new _M_nodeObject(...arguments);
-  };
-  _M.nodes = function (nodes){
-    return [...nodes].map(node => new this.base_ROOT.node().set(node))
-  };
+  _M.node = function (){ return new _M_nodeObject(...arguments); };
+  _M.nodes = function (nodes){ return [...nodes].map(node => new this.base_ROOT.node().set(node)) };
 
-  _M.number = function (){
-    return new _M_Number(...arguments);
-  };
-  _M.cookie = function (){
-    return new _M_Cookie(...arguments);
-  };
+  _M.number = function (){ return new _M_Number(...arguments); };
+  _M.cookie = function (){ return new _M_Cookie(...arguments); };
+  _M.repeater = function (){ return new _M_Repeater(...arguments); };
+
+  _M.image = function (){ return new _M_Image(_M); };
+  _M.cursor = function (object){ return new _M_Cursor(object); };
+  _M.keyboard = function (object){ return new _M_Keyboard(object); };
 
 _M.base_ROOT = _M;
   

@@ -52,6 +52,35 @@ return {
     </span>
     ${this.styles()}
     `;
+
+    _M.node(null, {
+      qs: "#goncat",
+      nodeAnd: function (){
+        let repeater = _M.repeater();
+        let cursor = _M.cursor();
+
+        let rotationBox = _M.node(null, {
+          qs: "#gonrotate"
+        });
+
+        const bah = 2
+        this.test = 5000;
+
+        setInterval(function (){
+          repeater.queue.push(function (){
+            if (_M.qs("#goncat") == null) repeater.pause();
+          });
+        }, 1000);
+
+        repeater.update = () => {
+          let x = cursor.pos.x,
+              y = cursor.pos.y - this.nodeObject.offsetTop;
+          
+          this.nodeObject.style.transform = `translate(${_M.max(x, 50)}px, ${_M.max(y, 50)}px)`
+        }
+        repeater.start(repeater);
+      }
+    })
   },
   styles: function (){
     let { cssTag } = this;

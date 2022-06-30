@@ -1,7 +1,8 @@
 return {
   color: {
-    background: "#F2AE3F",
-    foreground: "#C18424"
+    background: "#D15909",
+    foreground: "#96450F",
+    special: "#753409"
   },
   cssTag: `${obj.tag}[${obj.cType}=${obj.key}]`,
   
@@ -10,46 +11,34 @@ return {
 
     _M.data.background = color.background;
     _M.data.foreground = color.foreground;
-
     window.nav.updateColors(_M.data.foreground, _M.data.background);
 
-    obj.id = "socials";
+    obj.id = "palette";
   
     obj.innerHTML = 
     `
-    <h1 cover-main>Pages</h1>
+    <h1 cover-main>Page Palette</h1>
     <div socials-box class="flex flex-row flex-wrap"></div>
     ${this.styles()}
     `
   
     let componentLinkButtons = obj.querySelector("[socials-box]");
-    
+
+    let palettes = {};
+
     for (let componentLink in componentLinks){
       let componentLinkObj = componentLinks[componentLink];
-      
-      
-      if (componentManager.components[componentLinkObj.component]){
-        let component = componentManager.components[componentLinkObj.component]({});
-        
-        componentLinkObj.color = component.color.foreground;
-        componentLinkObj.background = component.color.background;
-      }
-      else {
-        componentManager.load(componentLinkObj.component);
-        componentManager.components["nav"]({}).transitionComponent(obj.key);
-        break;
-      }
-  
-      _M.node("a", {
+
+      palettes[componentLinkObj.component] = _M.node("a", {
         attr: {
           "social-button": "",
           target: "_blank"
         },
         style: {
-          color: componentLinkObj.color || "white",
-          background: componentLinkObj.background || "black",
+          background: this.color.foreground,
           flex: "1 1"
         },
+        className: "basic-button",
         listen: ["click", () => {
           componentManager.components["nav"]({}).transitionComponent(componentLinkObj.component);
         }],
@@ -57,11 +46,51 @@ return {
         appendTo: componentLinkButtons
       });
     }
+    
+    for (let componentLink in componentLinks){
+      let componentLinkObj = componentLinks[componentLink];
+      
+      
+      if (componentManager.components[componentLinkObj.component]){
+        let component = componentManager.components[componentLinkObj.component]({});
+
+        let box = _M.node("div", {
+          className: "flex flex-column flex-wrap",
+          style: { border: `2px solid ${this.color.special}` },
+          appendTo: palettes[componentLinkObj.component]
+        })
+        
+        for (let colorID in component.color){
+          let color = component.color[colorID];
+          let bc = _M.hexToRGB(color);
+
+          _M.node("div", {
+            className: "aspect-ratio basic-button",
+            style: {
+              background: color,
+              color: `rgb(${bc[0]-40}, ${bc[1]-40}, ${bc[2]-40})`,
+              height: "30px",
+              padding: "2px",
+              fontSize: "16px"
+            },
+            setText: color,
+            appendTo: box
+          });
+        }
+      }
+      else {
+        componentManager.load(componentLinkObj.component);
+        componentManager.components["nav"]({}).transitionComponent(obj.key);
+        break;
+      }
+  
+      
+    }
   
   },
   styles: function (){
     let { cssTag } = this;
-    let { foreground, background, special } = _M.data;
+    let { foreground, background } = _M.data;
 
     return `
     <style>
@@ -87,6 +116,7 @@ return {
       ${cssTag} [socials-box]{
         margin: 20px;
         padding: 20px;
+        overflow: hidden;
       }
   
       ${cssTag} [socials-box] [social-button]{
@@ -95,14 +125,14 @@ return {
         padding: 10px;
         font-size: 20px;
         text-decoration: none;
+        transition: 0.5s;
       }
     </style>
     `;
   },
   components: {
     Home:    { component: "home"    },
-    Orago:   { component: "orago"   },
     Socials: { component: "socials" },
-    Palette: { component: "palette" }
+    "Page Palette":   { component: "pages"   }
   },
 }

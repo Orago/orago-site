@@ -52,20 +52,15 @@ return {
       _M.node("a", {
         setText: "Home",
         attr: { "nav-button": "" },
+        className: "basic-button",
         listen: ["click",  () => transitionComponent("home")],
-        appendTo: nav
-      });
-    
-      _M.node("a", {
-        setText: "About Orago",
-        attr: { "nav-button": "" },
-        listen: ["click",  () => transitionComponent("orago")],
         appendTo: nav
       });
     
       _M.node("a", {
         setText: "Pages",
         attr: { "nav-button": "" },
+        className: "basic-button",
         listen: ["click",  () => transitionComponent("pages")],
         appendTo: nav
       });
@@ -76,6 +71,11 @@ return {
     body {
       background: ${background};
     }
+
+    .background-background { background: ${background} }
+    .background-foreground { background: ${foreground} }
+    .color-background { color: ${background} }
+    .color-foreground { color: ${foreground} }
 
     nav[main-nav] {
       background: ${foreground};
@@ -102,7 +102,6 @@ return {
 
     .main-nav a[nav-button]:hover {
       background: rgba(127.5, 127.5, 127.5, 0.2);
-      cursor: pointer;
     }
   </style>
   `,

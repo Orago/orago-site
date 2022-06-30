@@ -1,8 +1,7 @@
 return {
   color: {
-    background: "#D15909",
-    foreground: "#96450F",
-    special: "#753409"
+    background: "#F2AE3F",
+    foreground: "#C18424"
   },
   cssTag: `${obj.tag}[${obj.cType}=${obj.key}]`,
   
@@ -11,31 +10,44 @@ return {
 
     _M.data.background = color.background;
     _M.data.foreground = color.foreground;
+
     window.nav.updateColors(_M.data.foreground, _M.data.background);
 
-    obj.id = "palette";
+    obj.id = "socials";
   
     obj.innerHTML = 
     `
-    <h1 cover-main>Palette</h1>
+    <h1 cover-main>Mittz (To Do)</h1>
     <div socials-box class="flex flex-row flex-wrap"></div>
     ${this.styles()}
     `
   
     let componentLinkButtons = obj.querySelector("[socials-box]");
-
-    let palettes = {};
-
+    
     for (let componentLink in componentLinks){
       let componentLinkObj = componentLinks[componentLink];
-
-      palettes[componentLinkObj.component] = _M.node("a", {
+      
+      
+      if (componentManager.components[componentLinkObj.component]){
+        let component = componentManager.components[componentLinkObj.component]({});
+        
+        componentLinkObj.color = component.color.foreground;
+        componentLinkObj.background = component.color.background;
+      }
+      else {
+        componentManager.load(componentLinkObj.component);
+        componentManager.components["nav"]({}).transitionComponent(obj.key);
+        break;
+      }
+  
+      _M.node("a", {
         attr: {
           "social-button": "",
           target: "_blank"
         },
         style: {
-          background: this.color.foreground,
+          color: componentLinkObj.color || "white",
+          background: componentLinkObj.background || "black",
           flex: "1 1"
         },
         listen: ["click", () => {
@@ -45,47 +57,11 @@ return {
         appendTo: componentLinkButtons
       });
     }
-    
-    for (let componentLink in componentLinks){
-      let componentLinkObj = componentLinks[componentLink];
-      
-      
-      if (componentManager.components[componentLinkObj.component]){
-        let component = componentManager.components[componentLinkObj.component]({});
-
-        let box = _M.node("div", {
-          className: "flex flex-row flex-wrap",
-          style: { border: `2px solid ${this.color.special}` },
-          appendTo: palettes[componentLinkObj.component]
-        })
-        
-        for (let colorID in component.color){
-          let color = component.color[colorID];
-
-          _M.node("div", {
-            className: "aspect-ratio",
-            style: {
-              background: color,
-              height: "30px",
-              flex: "1 1"
-            },
-            appendTo: box
-          });
-        }
-      }
-      else {
-        componentManager.load(componentLinkObj.component);
-        componentManager.components["nav"]({}).transitionComponent(obj.key);
-        break;
-      }
-  
-      
-    }
   
   },
   styles: function (){
     let { cssTag } = this;
-    let { foreground, background } = _M.data;
+    let { foreground, background, special } = _M.data;
 
     return `
     <style>
@@ -125,9 +101,7 @@ return {
   },
   components: {
     Home:    { component: "home"    },
-    Orago:   { component: "orago"   },
     Socials: { component: "socials" },
-    Pages:   { component: "pages"   },
     Palette: { component: "palette" }
   },
 }

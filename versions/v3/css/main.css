@@ -18,3 +18,35 @@ body {
   transition: opacity 1s, background 1s;
   font-family: 'Mochiy Pop P One', sans-serif;
 }
+
+a {
+  text-decoration: none;
+}
+
+.basic-button {
+  cursor: pointer;
+}
+
+.basic-button:hover {
+  transform: scale(1.025);
+}
+
+
+.aaaa {
+  animation: pop 3s infinite;
+}
+
+@keyframes pop {
+
+  80% {
+    transform: scale(1);
+  }
+
+  90% {
+    transform: scale(.5);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
