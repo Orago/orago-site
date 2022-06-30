@@ -124,20 +124,10 @@ return {
     `;
   },
   components: {
-    Home: {
-      component: "home"
-    },
-    "About Me": {
-      component: "aboutme"
-    },
-    Socials: {
-      component: "socials"
-    },
-    Pages: {
-      component: "pages"
-    },
-    Palette: {
-      component: "palette"
-    }
+    Home:    { component: "home"    },
+    Orago:   { component: "orago"   },
+    Socials: { component: "socials" },
+    Pages:   { component: "pages"   },
+    Palette: { component: "palette" }
   },
 }

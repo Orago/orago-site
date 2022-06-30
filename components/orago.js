@@ -17,32 +17,8 @@ return {
   
     obj.innerHTML = 
     `
-    <h1 cover-main>About Me</h1>
-    <h2>Yo I'm Orago</h2>
-    <h3>Here are some of my favorite things to do!</h3>
-    <div class="flex justify-center">
-      <ul>
-        <li>Drawing</li>
-        <li>Programming</li>
-        <li>Photography</li>
-        <li>Drawing</li>
-      </ul>
-    </div>
-    <br>
-    <h2>Some of My Favorite Games</h2>
-    <div class="flex justify-center">
-      <ul>
-        <li>
-          <a href="https://www.minecraft.net/en-us">Minecraft</a>
-        </li>
-        <li>
-          <a href="https://recroom.com/">Rec Room</a>
-        </li>
-        <li>
-          <a href="https://hopfrogsa.net/">Forager</a>
-        </li>
-      </ul>
-    </div>
+    <h1 cover-main>I'm Orago</h1>
+    
     ${this.styles()}
     `;
   

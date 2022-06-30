@@ -208,7 +208,7 @@ class _M_nodeObject {
   addListener    = events           => { this.addListenersToNode(events);                                                                                 return this; }
   removeListener = key              => { this.removeListenersFromNode(key);                                                                               return this; }
   funcObj        = run              => { run(this.nodeObject);                                                                                            return this; }
-  nodeAnd        = run              => { run(this);                                                                                                       return this; }
+  nodeAnd        = run              => { run.bind(this)(this);                                                                                                       return this; }
   shorthand      = m   /* Methods*/ => { Object.keys(m).forEach( v /*Val*/ => this.root.and( m[v].constructor == Array ? m[v] : [m[v]], res => _M.jsonPathFinder(this, v)(...res) )); return this; }
   click          = (              ) => { this.nodeObject.click();                                                                                         return this; }
   fullscreen     = (              ) => { otk.fullscreen(this.nodeObject);                                                                                 return this; }
@@ -374,6 +374,7 @@ var _M = {
   _M.nodes = function (nodes){
     return [...nodes].map(node => new this.base_ROOT.node().set(node))
   };
+
   _M.number = function (){
     return new _M_Number(...arguments);
   };

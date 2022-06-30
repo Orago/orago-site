@@ -14,8 +14,7 @@ html {
 }
 
 body {
-  background: gray;
   margin: 0;
-  transition: opacity 1s;
+  transition: opacity 1s, background 1s;
   font-family: 'Mochiy Pop P One', sans-serif;
 }

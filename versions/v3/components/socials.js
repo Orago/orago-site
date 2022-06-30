@@ -1,12 +1,12 @@
 return {
   color: {
-    background: "#F2AE3F",
-    foreground: "#C18424"
+    background: "#EEAB53",
+    foreground: "#DA7C01"
   },
   cssTag: `${obj.tag}[${obj.cType}=${obj.key}]`,
   
   run: function (){
-    let { components: componentLinks, color} = this;
+    let { socials, color} = this;
 
     _M.data.background = color.background;
     _M.data.foreground = color.foreground;
@@ -17,51 +17,37 @@ return {
   
     obj.innerHTML = 
     `
-    <h1 cover-main>Pages</h1>
+    <h1 cover-main>Socials</h1>
     <div socials-box class="flex flex-row flex-wrap"></div>
     ${this.styles()}
     `
   
-    let componentLinkButtons = obj.querySelector("[socials-box]");
+    let socialButtons = obj.querySelector("[socials-box]");
     
-    for (let componentLink in componentLinks){
-      let componentLinkObj = componentLinks[componentLink];
-      
-      
-      if (componentManager.components[componentLinkObj.component]){
-        let component = componentManager.components[componentLinkObj.component]({});
-        
-        componentLinkObj.color = component.color.foreground;
-        componentLinkObj.background = component.color.background;
-      }
-      else {
-        componentManager.load(componentLinkObj.component);
-        componentManager.components["nav"]({}).transitionComponent(obj.key);
-        break;
-      }
+  
+    for (social in socials){
+      let socialObj = socials[social];
   
       _M.node("a", {
         attr: {
           "social-button": "",
+          href: socialObj.url,
           target: "_blank"
         },
         style: {
-          color: componentLinkObj.color || "white",
-          background: componentLinkObj.background || "black",
+          color: socialObj.color || "white",
+          background: socialObj.background || "black",
           flex: "1 1"
         },
-        listen: ["click", () => {
-          componentManager.components["nav"]({}).transitionComponent(componentLinkObj.component);
-        }],
-        setText: componentLink,
-        appendTo: componentLinkButtons
+        setText: social,
+        appendCloneTo: socialButtons
       });
     }
   
   },
   styles: function (){
     let { cssTag } = this;
-    let { foreground, background, special } = _M.data;
+    let { foreground, background } = _M.data;
 
     return `
     <style>
@@ -99,10 +85,34 @@ return {
     </style>
     `;
   },
-  components: {
-    Home:    { component: "home"    },
-    Orago:   { component: "orago"   },
-    Socials: { component: "socials" },
-    Palette: { component: "palette" }
+  socials: {
+    Discord: {
+      url: "https://discord.gg/ytBtmHJjmE",
+      background: "#738adb"
+    },
+    Youtube: {
+      url: "https://www.youtube.com/channel/UCbVQOO0xb57ja74eLJQJ3Kg",
+      background: "#ff0000"
+    },
+    Twitch: {
+      url: "https://www.twitch.tv/oragocat",
+      background: "#6441a5"
+    },
+    Twitter: {
+      url: "https://twitter.com/OragoMosh",
+      background: "#1DA1F2"
+    },
+    Reddit: {
+      url: "https://www.reddit.com/user/Orago51",
+      background: "#FF4301"
+    },
+    Instagram: {
+      url: "https://www.instagram.com/oragocat/",
+      background: "#405DE6"
+    },
+    Minecraft: {
+      url: "https://namemc.com/profile/9d9380ad-ccda-46e2-9fef-04e4541be0e1",
+      background: "#40ae33"
+    }
   },
 }
