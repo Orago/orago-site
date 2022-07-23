@@ -3,8 +3,12 @@ return {
     background: "#F08A4B",
     foreground: "#B05A24"
   },
-  cssTag: `${obj.tag}[${obj.cType}=${obj.key}]`,
-  run: function (){
+  data: {
+    title: "I'm Orago",
+    description: "We do a bit of trollin"
+  },
+  cssTag: obj => `${obj.tag}[${obj.cType}=${obj.key}]`,
+  init: function (obj){
     /* HTML */
     let gonCatImg;
   
@@ -16,52 +20,54 @@ return {
     _M.data.foreground = this.color.foreground;
   
     window.nav.updateColors(_M.data.foreground, _M.data.background);
-  
-    obj.innerHTML = 
-    `
-    <h1 cover-main>I'm Orago</h1>
-    <h2 class="color-foreground">We do stuff here</h2>
-    <span class="aaaa">
-      <img cover-image id="goncat" src="${gonCatImg}">
-    </span>
-    <span class="color-foreground">
-      <h3>Here are some of my favorite things to do!</h3>
-      <div class="flex justify-center">
-        <ul>
-          <li>Drawing</li>
-          <li>Programming</li>
-          <li>Photography</li>
-          <li>Drawing</li>
-        </ul>
-      </div>
-      <br>
-      <h2>Some of My Favorite Games</h2>
-      <div class="flex justify-center">
-        <ul>
-          <li>
-            <a href="https://www.minecraft.net/en-us">Minecraft</a>
-          </li>
-          <li>
-            <a href="https://recroom.com/">Rec Room</a>
-          </li>
-          <li>
-            <a href="https://hopfrogsa.net/">Forager</a>
-          </li>
-        </ul>
-      </div>
-    </span>
-    ${this.styles()}
-    `;
+
+    _M.node().set(obj)
+      .inner(`
+        <h1 cover-main>${this.data.title}</h1>
+        <hr class="color-foreground w-80" style="border: solid; transform: translate(10px, 10px);">
+        <h2 class="color-foreground">${this.data.description}</h2>
+        <img class="aaaa" cover-image id="goncat" src="${gonCatImg}">
+        <span class="color-foreground">
+          <h3>Here are some of my favorite things to do!</h3>
+          <div class="flex justify-center">
+            <ul style="text-align: initial;">
+              ${
+                (() => {
+                  let LIs = "";
+                  componentManager.components.info().data.favorite.hobbies.map((item) => LIs += `<li>${item}</li>`);
+                  return LIs;
+                })()
+              }
+            </ul>
+          </div>
+          <br>
+          <h2>Some of My Favorite Games</h2>
+          <div class="flex justify-center">
+            <ul style="text-align: initial;">
+              <li>
+                <a href="https://www.minecraft.net/en-us">Minecraft</a>
+              </li>
+              <li>
+                <a href="https://recroom.com/">Rec Room</a>
+              </li>
+              <li>
+                <a href="https://hopfrogsa.net/">Forager</a>
+              </li>
+            </ul>
+          </div>
+        </span>
+        ${this.styles(obj)}
+      `);
+
   },
-  styles: function (){
-    let { cssTag } = this;
+  styles: function (obj){
+    let cssTag = this.cssTag(obj);
     let { foreground, background } = _M.data;
 
     return `
     <style>
       ${cssTag} {
         background: ${background};
-        height: 100%;
         text-align: center;
       }
   
@@ -80,6 +86,12 @@ return {
   
       ${cssTag} img[cover-image]{
         width: 30%;
+      }
+
+      ${cssTag} img[cover-image]:after {
+        content: "";
+        width: 30%;
+
       }
 
       @media screen and (max-device-width: 600px), screen and (max-width: 600px) {

@@ -4,22 +4,21 @@ return {
     foreground: "#96450F",
     special: "#753409"
   },
-  cssTag: `${obj.tag}[${obj.cType}=${obj.key}]`,
+  cssTag: obj => `${obj.tag}[${obj.cType}=${obj.key}]`,
   
-  run: function (){
+  init: function (obj){
     let { components: componentLinks, color} = this;
 
     _M.data.background = color.background;
     _M.data.foreground = color.foreground;
     window.nav.updateColors(_M.data.foreground, _M.data.background);
 
-    obj.id = "palette";
   
     obj.innerHTML = 
     `
     <h1 cover-main>Page Palette</h1>
     <div socials-box class="flex flex-row flex-wrap"></div>
-    ${this.styles()}
+    ${this.styles(obj)}
     `
   
     let componentLinkButtons = obj.querySelector("[socials-box]");
@@ -29,27 +28,26 @@ return {
     for (let componentLink in componentLinks){
       let componentLinkObj = componentLinks[componentLink];
 
-      palettes[componentLinkObj.component] = _M.node("a", {
-        attr: {
-          "social-button": "",
-          target: "_blank"
-        },
-        style: {
-          background: this.color.foreground,
-          flex: "1 1"
-        },
-        className: "basic-button",
-        listen: ["click", () => {
-          componentManager.components["nav"]({}).transitionComponent(componentLinkObj.component);
-        }],
-        setText: componentLink,
-        appendTo: componentLinkButtons
-      });
+      palettes[componentLinkObj.component] = _M.node("a")
+      .attr({
+        "social-button": "",
+        target: "_blank"
+      })
+      .style({
+        background: this.color.foreground,
+        flex: "1 1"
+      })
+      .append(
+        _M.node().setText(componentLink)
+        .className("basic-button")
+        .listen("click", () => {
+          componentManager.transition(componentLinkObj.component);
+        })
+      ).appendTo(componentLinkButtons);
     }
     
     for (let componentLink in componentLinks){
       let componentLinkObj = componentLinks[componentLink];
-      
       
       if (componentManager.components[componentLinkObj.component]){
         let component = componentManager.components[componentLinkObj.component]({});
@@ -64,23 +62,31 @@ return {
           let color = component.color[colorID];
           let bc = _M.hexToRGB(color);
 
-          _M.node("div", {
-            className: "aspect-ratio basic-button",
-            style: {
-              background: color,
-              color: `rgb(${bc[0]-40}, ${bc[1]-40}, ${bc[2]-40})`,
-              height: "30px",
-              padding: "2px",
-              fontSize: "16px"
-            },
-            setText: color,
-            appendTo: box
-          });
+          _M.node("div")
+          .className("aspect-ratio basic-button")
+          .style({
+            background: color,
+            color: `rgb(${bc[0]-40}, ${bc[1]-40}, ${bc[2]-40})`,
+            height: "30px",
+            padding: "2px",
+            fontSize: "16px"
+          })
+          .attr({ title: "Click to copy!" })
+          .setText(color)
+          .listen("click", () => {
+            _M.copyTxt(color);
+          })
+          .appendTo(box);
         }
       }
       else {
         componentManager.load(componentLinkObj.component);
-        componentManager.components["nav"]({}).transitionComponent(obj.key);
+
+        setTimeout(function (){
+          componentManager.transition(obj.key);
+        }, 50);
+
+        // componentManager.transition(componentLinkObj.component);
         break;
       }
   
@@ -88,15 +94,14 @@ return {
     }
   
   },
-  styles: function (){
-    let { cssTag } = this;
+  styles: function (obj){
+    let cssTag = this.cssTag(obj);
     let { foreground, background } = _M.data;
 
     return `
     <style>
       ${cssTag} {
         background: ${background};
-        height: 100%;
         text-align: center;
       }
   
@@ -133,6 +138,8 @@ return {
   components: {
     Home:    { component: "home"    },
     Socials: { component: "socials" },
-    "Page Palette":   { component: "pages"   }
+    "Page Palette": { component: "pages"   },
+    "404": { component: "404" },
+    "Cat": { component: "cat" }
   },
 }

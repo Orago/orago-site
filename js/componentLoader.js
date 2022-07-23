@@ -1,35 +1,94 @@
-if (_M == undefined) var _M;
+if (_M == undefined) var _M; /* V15 */
 class componentLoader {
-  constructor (){
+  constructor (defaultComponent = "home"){
     this.master = "meown";
     this.type = `${this.master}-component`;
+    this.missingComponent = "404";
+    this.defaultComponent = defaultComponent;
     this.runTimes = 0;
     this.components = {};
+    this.componentData = {};
   }
 
-  load = async (id) => {
-    let compString = await _M.get({ format: 'text', url: `./components/${id}.js` });
-    let comp = new Function('obj', compString);
-    this.components[id] = comp;
-    return comp;
+  load = async (id, data = {}) => new Promise( async (resolve, reject) => {
+    
+    let compString = await (_M.url().fetch({ url: `./components/${id}.js` }));
+    
+    if (compString.response.status == 404){
+      compString = await (_M.url().fetch({ url: `./components/${this.missingComponent}.js` }));
+
+      if (compString.response.status == 404) {
+        compString = await (_M.url().fetch({ url: `./components/${this.defaultComponent}.js` }));
+      }
+    }
+
+    this.componentData[id] = data;
+
+    resolve(_M.and((new Function(await compString.text())), (e) => {
+      this.components[id] = e;
+      return e;
+    }));
+  });
+  
+  transition = async function (name, ms = 1000){
+    document.body.style.opacity = 0;
+    
+    _M.node().qs("[meown-main-component]").attr({ "meown-component": name });
+    await componentManager.update();
+    _M.url().query(true).set("@", name);
+
+    document.body.style.opacity = 1;
   }
   
   async update (){
-    let components = document.querySelectorAll(`[${this.type}]`);
+    return new Promise( async (resolve, reject) => {
+      let components = document.querySelectorAll(`[${this.type}]`);
 
-    for (var i = 0; i < components.length; i++){
-      let dataObj = components[i];
+      for (var i = 0; i < components.length; i++){
+        let dataObj = this.bindObj(components[i]);
+
+        let componentData = componentManager.components.hasOwnProperty(dataObj.key) ?
+        componentManager.components[dataObj.key] : ( await this.load(dataObj.key, dataObj) )
+
+        let comp =  componentData();
+
+        if (comp.locked == true && this.runTimes > 0) continue;
+        if (comp.init) comp.init(dataObj);
+      }
+
+      await this.refresh();
+
+      this.runTimes += 1;
+      resolve();
+    });
+  }
+
+
+
+  refresh(){
+    return new Promise( async (resolve, reject) => {
+      let components = document.querySelectorAll(`[${this.type}]`);
+
+      for (var i = 0; i < components.length; i++){
+        _M.and(this.bindObj(components[i]), async dataObj => {
+          let comp =  (
+            await this.load(dataObj.key, dataObj)
+          )();
+
+          if (comp.update) comp.update(dataObj);
+        });
+      }
       
-      dataObj.cType = this.type;
-      dataObj.key   = dataObj.getAttribute(this.type);
-      dataObj.tag   = dataObj.tagName.toLowerCase();
-      dataObj.runTimes = this.runTimes;
+      resolve();
+    });
+  }
 
-      if (dataObj.getAttribute(`${this.master}-locked`) != undefined && this.runTimes > 0) continue;
-      (
-        await this.load(dataObj.getAttribute(this.type)))(dataObj).run();
-    }
-
-    this.runTimes += 1;
+  bindObj (dataObj) {
+    return _M.bindData(dataObj, {
+      cType: this.type,
+      key: dataObj.getAttribute(this.type),
+      tag: dataObj.tagName.toLowerCase(),
+      runTimes: this.runTimes
+    })
   }
 }

@@ -6,30 +6,40 @@
     <title>Orago</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <div meown-component="css" meown-locked></div>
+    <link rel="stylesheet" href="./mittz-css/v5.css">
+    <link rel="stylesheet" href="./css/main.css">
   </head>
   <body>
-    <nav meown-component="nav" ></nav>
+    <!-- Preload -->
+    <div meown-component="https"></div>
+    <div meown-component="info"></div>
+    <!-- Preload End -->
 
-    <div current-components>
-      <div meown-component="home"></div>
+
+    <nav meown-component="nav" ></nav>
+    
+
+    <div class="center-content" meown-main-component meown-component="home">
+      <!-- Loaded By Component Loader -->
     </div>
     
-    <script src="./mittz/v13.js"></script>
+    <script src="./mittz/v15.js"></script>
     <script src="./js/componentLoader.js"></script>
 
-    <div meown-component="https"></div>
+    
 
     <script>
-      let componentManager = new componentLoader();
+      let componentManager = new componentLoader("home");
       _M.data = {
-        components: {
-
-        }
+        components: {}
       };
 
-      _M.body = _M.node(null, { set: document.body });
+      if (_M.parseUrl(window.location.href).params.get("@"))
+        _M.node().qs("[meown-main-component]").attr({
+          "meown-component": _M.parseUrl(window.location.href).params.get("@")
+        });
 
+      _M.body = _M.node(null, { set: document.body });
 
       componentManager.update();
     </script>

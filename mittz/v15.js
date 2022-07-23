@@ -141,6 +141,8 @@ window["orago's tool kit"] = {
   }
 }
 
+
+
 var otk = window["orago's tool kit"];
 
 var _M_Storage = {
@@ -196,6 +198,9 @@ class _M_nodeObject {
   className      = classes          => { this.nodeObject.className                              = classes;                                                return this; }
   qs             = nodeName         => { this.nodeObject                                        = document.querySelector(nodeName);                       return this; }
   html           = text             => { this.nodeObject.innerHTML                              = text;                                                   return this; }
+  inner          = text             => { this.nodeObject.innerHTML                              = text;                                                   return this; }
+  addInner          = text             => { this.nodeObject.innerHTML                              = text;                                                   return this; }
+  outer          = text             => { this.nodeObject.outerHTML                              = text;                                                   return this; }
   set            = givenNode        => { this.nodeObject                                        = givenNode;                                              return this; }
   attr           = attr             => { for (let key in attr)       this.nodeObject.setAttribute(key, attr[key]);                                        return this; }
   property       = prop             => { for (let key in prop)       this.nodeObject[key]       = prop[key];                                              return this; }
@@ -463,6 +468,17 @@ var _M = {
     else if (["text", "html"].includes(format)) return await fetch(url, options).then(e => e.text());
     else                                        return await fetch(url, options);
   },
+  fetch: async (data, options) => {
+    let { url, format } = data;
+    let e = {};
+
+    e.response = await fetch(url, options);
+
+    e.json = () => e.response.json();
+    e.text = () => e.response.text();
+
+    return e;
+  },
   fetchAppend: async function (object, url) {
     await this.get({ format: "html", url }).then((content) => object.innerHTML += content );
     return true;
@@ -470,6 +486,12 @@ var _M = {
   fetchSet   : async function (object, url) {
     await this.get({ format: "html", url }).then((content) => object.innerHTML = content); 
     return true; 
+  },
+  bindData: (object, data) => {
+    Object.keys(data).forEach( key => {
+      object[key] = data[key];
+    });
+    return object;
   },
   qs: (obj, parent = document) => parent.querySelector(obj),
   qsAll: value                 => document.querySelectorAll(value),
@@ -533,6 +555,36 @@ var _M = {
     var rand = Math.random() * w[w.length - 1];
     for (i = 0; i < w.length; i++) if (w[i] > rand) break;
     return o[i].item;
+  },
+  copyTxt: (text) => {
+    if (!navigator.clipboard) {
+      this.fallbackCopyTxt(text);
+      return;
+    }
+    navigator.clipboard.writeText(text);
+  },
+  fallbackCopyTxt: function (text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    
+    // Avoid scrolling to bottom
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+  
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+  
+    try {
+      var successful = document.execCommand('copy');
+      var msg = successful ? 'successful' : 'unsuccessful';
+      console.log('Fallback: Copying text command was ' + msg);
+    } catch (err) {
+      console.error('Fallback: Oops, unable to copy', err);
+    }
+  
+    document.body.removeChild(textArea);
   }
 }
   
@@ -547,6 +599,76 @@ var _M = {
   _M.image = function (){ return new _M_Image(_M); };
   _M.cursor = function (object){ return new _M_Cursor(object); };
   _M.keyboard = function (object){ return new _M_Keyboard(object); };
+
+  _M.url = function (object){
+
+    class _M_Url {
+      constructor(url = window.location.href){
+        this.url = (new URL(url));
+
+        this.settings = {
+          regexValidation: /(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/g
+        }
+      }
+
+      
+
+      fetch = async (data, options) => {
+        let { url, format } = data;
+        let e = {};
+
+        this.response = await fetch(url, options);
+        this.json = () => this.response.json();
+        this.text = () => this.response.text();
+
+        return this;
+      }
+
+      valid  = () => settings.regexValidation.test(this.url);
+
+      params = () => this.url.searchParams;
+
+      pathArray = () => {
+        let { pathname: pn } = this.url;
+        let paths = pn.startsWith("/") ? pn.replace("/", "").split("/") : pn.split("/"),
+            pathsnf = [];
+
+        paths.forEach( (item, index) => {
+          if (item.includes(".")) return;
+          else pathsnf.push(item);
+        });
+
+        return pathsnf;
+      };
+
+      query = (replace = false) => {
+        return {
+          set: (key, value) => {
+            let params = this.url.searchParams;
+
+            if (params.has(key)) params.delete(key);
+
+            params.append(key, value);
+
+            let newUrl = window.origin + "?" +params.toString();
+
+            if (replace == true) window.history.replaceState({ path: newUrl }, '', newUrl);
+
+            return newUrl;
+          },
+          get: (key) => this.url.searchParams.get(key),
+          obj: () => this.url.searchParams,
+          clear: () => {
+            if (replace == true) window.history.replaceState({ path: window.origin }, '', window.origin)
+          }
+        }
+
+      }
+    
+    }
+
+    return new _M_Url(object);
+  }
 
 _M.base_ROOT = _M;
   

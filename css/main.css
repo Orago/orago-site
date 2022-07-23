@@ -1,5 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fredoka+One&family=Mochiy+Pop+P+One&display=swap');
 
+@font-face {
+  font-family: kitto;
+  src: url(../fonts/Kitto.otf);
+}
+
+@font-face {
+  font-family: oliveDays;
+  src: url(../fonts/Olive%20Days.otf);
+}
+
+@font-face {
+  font-family: baksoSapi;
+  src: url(../fonts/BaksoSapi.otf);
+}
+
+@font-face {
+  font-family: candyBeans;
+  src: url(../fonts/Candy%20Beans.otf);
+}
+
 *,
 *:before,
 *:after {
@@ -16,7 +36,8 @@ html {
 body {
   margin: 0;
   transition: opacity 1s, background 1s;
-  font-family: 'Mochiy Pop P One', sans-serif;
+  font-family: baksoSapi;
+  
 }
 
 a {
@@ -33,17 +54,19 @@ a {
 
 
 .aaaa {
-  animation: pop 3s infinite;
+  animation: pop 10s infinite;
 }
 
 @keyframes pop {
 
   80% {
     transform: scale(1);
+    opacity: 1;
   }
 
   90% {
     transform: scale(.5);
+    opacity: 0;
   }
 
   to {

@@ -3,9 +3,9 @@ return {
     background: "#EEAB53",
     foreground: "#DA7C01"
   },
-  cssTag: `${obj.tag}[${obj.cType}=${obj.key}]`,
+  cssTag: obj => `${obj.tag}[${obj.cType}=${obj.key}]`,
   
-  run: function (){
+  init: function (obj){
     let { socials, color} = this;
 
     _M.data.background = color.background;
@@ -19,7 +19,7 @@ return {
     `
     <h1 cover-main>Socials</h1>
     <div socials-box class="flex flex-row flex-wrap"></div>
-    ${this.styles()}
+    ${this.styles(obj)}
     `
   
     let socialButtons = obj.querySelector("[socials-box]");
@@ -34,6 +34,7 @@ return {
           href: socialObj.url,
           target: "_blank"
         },
+        className: "basic-button",
         style: {
           color: socialObj.color || "white",
           background: socialObj.background || "black",
@@ -45,8 +46,8 @@ return {
     }
   
   },
-  styles: function (){
-    let { cssTag } = this;
+  styles: function (obj){
+    let cssTag = this.cssTag(obj);
     let { foreground, background } = _M.data;
 
     return `
