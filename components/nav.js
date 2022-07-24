@@ -128,18 +128,7 @@ return {
     }
 
     [main-nav]:not(.open) [toggle] {
-      animation: navH 10s infinite;
       border: solid 2px transparent; 
-    }
-    
-    @keyframes navH {
-      80% {
-        border-color: transparent;
-      }
-
-      85% {
-        border-color: ${foreground};
-      }
     }
 
     [main-nav].float:not(.open) [toggle], [main-nav]:not(.open) [toggle]:hover {
@@ -175,7 +164,7 @@ return {
       flex-direction: column;
     }
 
-    nav[main-nav] a[nav-button] {
+    nav[main-nav] a[nav-button], .navBtn {
       flex: 1 1;
       color: ${foreground};
       padding: 10px;

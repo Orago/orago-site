@@ -41,6 +41,9 @@ return {
             </ul>
           </div>
           <br>
+          <h2>Currently Listening To</h2>
+          <nav meown-component="spotify" spotify-mini="true" spotify-bar="true" spotify-cover="true"></nav>
+          <br>
           <h2>Some of My Favorite Games</h2>
           <div class="flex justify-center">
             <ul style="text-align: initial;">

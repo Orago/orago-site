@@ -63,7 +63,7 @@ return {
           let bc = _M.hexToRGB(color);
 
           _M.node("div")
-          .className("aspect-ratio basic-button")
+          .className("basic-button")
           .style({
             background: color,
             color: `rgb(${bc[0]-40}, ${bc[1]-40}, ${bc[2]-40})`,
@@ -140,6 +140,7 @@ return {
     Socials: { component: "socials" },
     "Page Palette": { component: "pages"   },
     "404": { component: "404" },
-    "Cat": { component: "cat" }
+    "Cat": { component: "cat" },
+    "Spotify": { component: "spotify" }
   },
 }

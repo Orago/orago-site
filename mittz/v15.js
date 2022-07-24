@@ -199,7 +199,7 @@ class _M_nodeObject {
   qs             = nodeName         => { this.nodeObject                                        = document.querySelector(nodeName);                       return this; }
   html           = text             => { this.nodeObject.innerHTML                              = text;                                                   return this; }
   inner          = text             => { this.nodeObject.innerHTML                              = text;                                                   return this; }
-  addInner          = text             => { this.nodeObject.innerHTML                              = text;                                                   return this; }
+  addInner       = text             => { this.nodeObject.innerHTML                              += text;                                                   return this; }
   outer          = text             => { this.nodeObject.outerHTML                              = text;                                                   return this; }
   set            = givenNode        => { this.nodeObject                                        = givenNode;                                              return this; }
   attr           = attr             => { for (let key in attr)       this.nodeObject.setAttribute(key, attr[key]);                                        return this; }
